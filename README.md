@@ -65,6 +65,7 @@ MyPianoInstructor/
     ├── ScanMusicView.swift
     ├── PlaybackView.swift
     └── PianoKeyboardView.swift
+```
 ---
 
 ## 🔧 Tech Stack
