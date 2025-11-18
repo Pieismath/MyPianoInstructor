@@ -47,10 +47,12 @@ Reusable `PianoKeyboardView` that:
 ---
 
 ## 🎯 Current Architecture
+
+```plaintext
 MyPianoInstructor/
 │
-├── MyPianoInstructorApp.swift       // EnvironmentObject setup
-├── RootTabView.swift                // Bottom navigation
+├── MyPianoInstructorApp.swift
+├── RootTabView.swift
 │
 ├── Models/
 │   └── Song.swift
@@ -59,10 +61,10 @@ MyPianoInstructor/
 │   └── SongLibraryViewModel.swift
 │
 └── Views/
-├── SongLibraryView.swift
-├── ScanMusicView.swift
-├── PlaybackView.swift
-└── PianoKeyboardView.swift
+    ├── SongLibraryView.swift
+    ├── ScanMusicView.swift
+    ├── PlaybackView.swift
+    └── PianoKeyboardView.swift
 ---
 
 ## 🔧 Tech Stack
