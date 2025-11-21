@@ -17,18 +17,21 @@ struct RootTabView: View {
 
             NavigationStack {
                 SongLibraryView(selectedSong: $selectedSong, tabSelection: $tabSelection)
+                    .environmentObject(libraryVM)
             }
             .tabItem { Image(systemName: "house") }
             .tag(0)
 
             NavigationStack {
                 ScanMusicView(selectedSong: $selectedSong, tabSelection: $tabSelection)
+                    .environmentObject(libraryVM)
             }
             .tabItem { Image(systemName: "plus.circle") }
             .tag(1)
 
             NavigationStack {
                 PlaybackView(song: selectedSong)
+                    .environmentObject(libraryVM)
             }
             .tabItem { Image(systemName: "play.circle") }
             .tag(2)

@@ -8,12 +8,15 @@
 import SwiftUI
 
 struct PlaybackView: View {
+    @EnvironmentObject var libraryVM: SongLibraryViewModel
+    
     let song: Song?
     
     @State private var isPlaying = false
-    @State private var currentBeat: Int = 0
-    let totalBeats = 16          // just for the mock animation
-    let totalKeys = 14           // small piano
+    @State private var currentTime: TimeInterval = 0
+    
+    // How many seconds ahead the notes should appear above the keyboard
+    let lookahead: TimeInterval = 3.0
     
     var body: some View {
         VStack(spacing: 24) {
@@ -25,7 +28,9 @@ struct PlaybackView: View {
             }
             .padding(.top)
             
-            if let song {
+            if let song,
+               let playback = libraryVM.playbackData(for: song) {
+                
                 Text(song.title)
                     .font(.headline)
                 
@@ -41,21 +46,21 @@ struct PlaybackView: View {
                 // Controls
                 HStack(spacing: 40) {
                     Button {
-                        currentBeat = 0
+                        currentTime = 0
                     } label: {
                         Image(systemName: "backward.end.fill")
                     }
                     .font(.title2)
                     
                     Button {
-                        togglePlay()
+                        togglePlay(totalDuration: playback.totalDuration)
                     } label: {
                         Image(systemName: isPlaying ? "pause.fill" : "play.fill")
                     }
                     .font(.largeTitle)
                     
                     Button {
-                        stepForward()
+                        stepForward(totalDuration: playback.totalDuration)
                     } label: {
                         Image(systemName: "forward.end.fill")
                     }
@@ -63,14 +68,25 @@ struct PlaybackView: View {
                 }
                 .padding(.top, 8)
                 
-                // Simple horizontal progress line
-                ProgressView(value: Double(currentBeat), total: Double(totalBeats))
+                // Progress bar over entire song duration
+                ProgressView(value: currentTime, total: playback.totalDuration)
                     .padding(.horizontal)
                 
-                // Piano keyboard
-                PianoKeyboardView(highlightedIndex: highlightedKeyIndex)
+                // Falling notes + keyboard
+                VStack(spacing: 8) {
+                    FallingNotesView(
+                        notes: playback.notes,
+                        currentTime: currentTime,
+                        lookahead: lookahead
+                    )
+                    .frame(height: 160)
+                    
+                    PianoKeyboardView(
+                        highlightedIndex: highlightedKeyIndex(from: playback.notes)
+                    )
                     .frame(height: 120)
-                    .padding(.top, 8)
+                }
+                .padding(.top, 8)
                 
                 Spacer()
             } else {
@@ -86,33 +102,48 @@ struct PlaybackView: View {
         }
     }
     
-    private var highlightedKeyIndex: Int {
-        // Map beats to key indexes just to show something moving.
-        guard totalBeats > 0 else { return 0 }
-        return (currentBeat * totalKeys / max(totalBeats, 1)) % totalKeys
+    // Map "current notes" to a key index, just as a demo
+    private func highlightedKeyIndex(from notes: [NoteEvent]) -> Int {
+        // Take the first note that is currently sounding
+        if let active = notes.first(where: { note in
+            currentTime >= note.startTime &&
+            currentTime <= note.startTime + note.duration
+        }) {
+            // compress pitch to a small keyboard index
+            let basePitch = 60 // middle C
+            let offset = max(0, min(13, active.pitch - basePitch))
+            return offset
+        }
+        return 0
     }
     
-    private func togglePlay() {
+    private func togglePlay(totalDuration: TimeInterval) {
         isPlaying.toggle()
-        
         if isPlaying {
-            startTimer()
+            startTimer(totalDuration: totalDuration)
         }
     }
     
-    private func startTimer() {
-        // super simple “animation” using a repeating timer
-        Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { timer in
+    private func startTimer(totalDuration: TimeInterval) {
+        Timer.scheduledTimer(withTimeInterval: 0.03, repeats: true) { timer in
             if !isPlaying {
                 timer.invalidate()
                 return
             }
-            currentBeat = (currentBeat + 1) % (totalBeats + 1)
+            currentTime += 0.03
+            if currentTime >= totalDuration {
+                currentTime = totalDuration
+                isPlaying = false
+                timer.invalidate()
+            }
         }
     }
     
-    private func stepForward() {
-        currentBeat = (currentBeat + 1) % (totalBeats + 1)
+    private func stepForward(totalDuration: TimeInterval) {
+        currentTime += 0.25
+        if currentTime > totalDuration {
+            currentTime = totalDuration
+        }
     }
 }
 
