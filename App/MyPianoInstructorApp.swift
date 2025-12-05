@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct MyPianoInstructorApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @StateObject private var libraryVM = SongLibraryViewModel()
     
     var body: some Scene {

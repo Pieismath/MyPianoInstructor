@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		F2C938AD2EDFF4CB00579BDB /* Piano.sf2 in Resources */ = {isa = PBXBuildFile; fileRef = F2C938AC2EDFF4CB00579BDB /* Piano.sf2 */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		F279A5AA2ECBF4ED00CDD455 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,15 +28,41 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		F279A59C2ECBF4EA00CDD455 /* MyPianoInstructor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyPianoInstructor.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F279A5A92ECBF4ED00CDD455 /* MyPianoInstructorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyPianoInstructorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F279A5B32ECBF4ED00CDD455 /* MyPianoInstructorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyPianoInstructorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2C938892EDFCC5F00579BDB /* MyPianoInstructor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MyPianoInstructor.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2C9388A2EDFCC5F00579BDB /* MyPianoInstructorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyPianoInstructorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2C9388B2EDFCC5F00579BDB /* MyPianoInstructorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyPianoInstructorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2C938AC2EDFF4CB00579BDB /* Piano.sf2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = Piano.sf2; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		F279A59E2ECBF4EA00CDD455 /* MyPianoInstructor */ = {
+		F2C938642EDFBD3600579BDB /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = MyPianoInstructor;
+			path = App;
+			sourceTree = "<group>";
+		};
+		F2C9386D2EDFCB2900579BDB /* Models */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Models;
+			sourceTree = "<group>";
+		};
+		F2C938772EDFCB6700579BDB /* ViewModels */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		F2C9387E2EDFCB7D00579BDB /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		F2C938852EDFCBC700579BDB /* Helpers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		F2C938AE2EDFF54200579BDB /* Audio */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Audio;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -65,19 +95,17 @@
 		F279A5932ECBF4EA00CDD455 = {
 			isa = PBXGroup;
 			children = (
-				F279A59E2ECBF4EA00CDD455 /* MyPianoInstructor */,
-				F279A59D2ECBF4EA00CDD455 /* Products */,
+				F2C938AE2EDFF54200579BDB /* Audio */,
+				F2C938852EDFCBC700579BDB /* Helpers */,
+				F2C938772EDFCB6700579BDB /* ViewModels */,
+				F2C9386D2EDFCB2900579BDB /* Models */,
+				F2C938642EDFBD3600579BDB /* App */,
+				F2C9387E2EDFCB7D00579BDB /* Views */,
+				F2C938892EDFCC5F00579BDB /* MyPianoInstructor.app */,
+				F2C9388A2EDFCC5F00579BDB /* MyPianoInstructorTests.xctest */,
+				F2C9388B2EDFCC5F00579BDB /* MyPianoInstructorUITests.xctest */,
+				F2C938AC2EDFF4CB00579BDB /* Piano.sf2 */,
 			);
-			sourceTree = "<group>";
-		};
-		F279A59D2ECBF4EA00CDD455 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F279A59C2ECBF4EA00CDD455 /* MyPianoInstructor.app */,
-				F279A5A92ECBF4ED00CDD455 /* MyPianoInstructorTests.xctest */,
-				F279A5B32ECBF4ED00CDD455 /* MyPianoInstructorUITests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -96,13 +124,18 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				F279A59E2ECBF4EA00CDD455 /* MyPianoInstructor */,
+				F2C938642EDFBD3600579BDB /* App */,
+				F2C9386D2EDFCB2900579BDB /* Models */,
+				F2C938772EDFCB6700579BDB /* ViewModels */,
+				F2C9387E2EDFCB7D00579BDB /* Views */,
+				F2C938852EDFCBC700579BDB /* Helpers */,
+				F2C938AE2EDFF54200579BDB /* Audio */,
 			);
 			name = MyPianoInstructor;
 			packageProductDependencies = (
 			);
 			productName = MyPianoInstructor;
-			productReference = F279A59C2ECBF4EA00CDD455 /* MyPianoInstructor.app */;
+			productReference = F2C938892EDFCC5F00579BDB /* MyPianoInstructor.app */;
 			productType = "com.apple.product-type.application";
 		};
 		F279A5A82ECBF4ED00CDD455 /* MyPianoInstructorTests */ = {
@@ -122,7 +155,7 @@
 			packageProductDependencies = (
 			);
 			productName = MyPianoInstructorTests;
-			productReference = F279A5A92ECBF4ED00CDD455 /* MyPianoInstructorTests.xctest */;
+			productReference = F2C9388A2EDFCC5F00579BDB /* MyPianoInstructorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		F279A5B22ECBF4ED00CDD455 /* MyPianoInstructorUITests */ = {
@@ -142,7 +175,7 @@
 			packageProductDependencies = (
 			);
 			productName = MyPianoInstructorUITests;
-			productReference = F279A5B32ECBF4ED00CDD455 /* MyPianoInstructorUITests.xctest */;
+			productReference = F2C9388B2EDFCC5F00579BDB /* MyPianoInstructorUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -178,7 +211,7 @@
 			mainGroup = F279A5932ECBF4EA00CDD455;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = F279A59D2ECBF4EA00CDD455 /* Products */;
+			productRefGroup = F279A5932ECBF4EA00CDD455;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -194,6 +227,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F2C938AD2EDFF4CB00579BDB /* Piano.sf2 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

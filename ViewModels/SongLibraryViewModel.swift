@@ -13,8 +13,8 @@ class SongLibraryViewModel: ObservableObject {
     // Parsed playback data for each song id
     @Published var playbackDataBySongID: [UUID: PlaybackData] = [:]
 
-    func addSong(title: String) -> Song {
-        let newSong = Song.mock(title: title)
+    func addSong(title: String, musicXML: String) -> Song {
+        let newSong = Song.mock(title: title, musicXML: musicXML)
         songs.append(newSong)
         return newSong
     }
