@@ -25,14 +25,24 @@ extension View {
 }
 
 private func setLandscape() {
-    AppDelegate.orientationLock = .landscapeRight
+    AppDelegate.orientationLock = .landscape
     
     DispatchQueue.main.async {
-        UIDevice.current.setValue(
-            UIInterfaceOrientation.landscapeRight.rawValue,
-            forKey: "orientation"
-        )
-        UIViewController.attemptRotationToDeviceOrientation()
+        // 1. Force the physical rotation (still required for strict enforcement)
+        if #available(iOS 16.0, *) {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscape))
+        } else {
+            UIDevice.current.setValue(UIInterfaceOrientation.landscapeRight.rawValue, forKey: "orientation")
+        }
+        
+        // 2. Tell the system to refresh orientation state (The fix for your warning)
+        if #available(iOS 16.0, *) {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            windowScene?.windows.first?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            UIViewController.attemptRotationToDeviceOrientation()
+        }
     }
 }
 
@@ -40,10 +50,20 @@ private func setPortrait() {
     AppDelegate.orientationLock = .portrait
     
     DispatchQueue.main.async {
-        UIDevice.current.setValue(
-            UIInterfaceOrientation.portrait.rawValue,
-            forKey: "orientation"
-        )
-        UIViewController.attemptRotationToDeviceOrientation()
+        // 1. Force the physical rotation
+        if #available(iOS 16.0, *) {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            windowScene?.requestGeometryUpdate(.iOS(interfaceOrientations: .portrait))
+        } else {
+            UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+        }
+        
+        // 2. Tell the system to refresh orientation state
+        if #available(iOS 16.0, *) {
+            let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+            windowScene?.windows.first?.rootViewController?.setNeedsUpdateOfSupportedInterfaceOrientations()
+        } else {
+            UIViewController.attemptRotationToDeviceOrientation()
+        }
     }
 }

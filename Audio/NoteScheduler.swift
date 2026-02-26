@@ -2,52 +2,119 @@
 //  NoteScheduler.swift
 //  MyPianoInstructor
 //
-//  Created by Jason Fang on 11/17/25.
+//  Created by Jason Fang
 //
 
 import Foundation
 
+/// All methods must be called from the main thread (driven by CADisplayLink).
+@MainActor
 class NoteScheduler {
 
-    private var timers: [Timer] = []
-    private var pausedAt: TimeInterval = 0
+    private struct AudioEvent: Comparable {
+        let time: TimeInterval
+        let pitch: Int
+        let isNoteOn: Bool
 
-    func schedule(playback: PlaybackData, fromTime startTime: TimeInterval) {
-        cancel() // Clear old timers
-
-        for note in playback.notes {
-            let noteStart = note.startTime
-            let noteEnd = note.startTime + note.duration
-
-            // If the note already ended → do nothing
-            if noteEnd <= startTime { continue }
-
-            // START TIME
-            let delayStart = max(0, noteStart - startTime)
-
-            let startTimer = Timer.scheduledTimer(withTimeInterval: delayStart, repeats: false) { _ in
-                AudioEngineManager.shared.play(note: note.pitch)
-            }
-
-            // END TIME
-            let delayEnd = max(0, noteEnd - startTime)
-
-            let stopTimer = Timer.scheduledTimer(withTimeInterval: delayEnd, repeats: false) { _ in
-                AudioEngineManager.shared.stop(note: note.pitch)
-            }
-
-            timers.append(startTimer)
-            timers.append(stopTimer)
+        static func < (lhs: AudioEvent, rhs: AudioEvent) -> Bool {
+            if lhs.time != rhs.time { return lhs.time < rhs.time }
+            // At the same time: note-ON first, then note-OFF.
+            // This ensures chords all start before anything is released,
+            // and re-triggered notes sound before the previous instance ends.
+            if lhs.isNoteOn != rhs.isNoteOn { return lhs.isNoteOn }
+            return lhs.pitch < rhs.pitch
         }
     }
 
-    func pause(at time: TimeInterval) {
-        pausedAt = time
+    private var events: [AudioEvent] = []
+    private var nextIndex: Int = 0
+
+    // Reference-counted active notes: a pitch stays on until ALL overlapping
+    // instances have sent note-off. This prevents one note's off from killing
+    // another note on the same pitch that is still being held (e.g. pedal sustain).
+    private var activeNoteCounts: [Int: Int] = [:]
+
+    /// Prepare all audio events for the given playback data, starting from `fromTime`.
+    func prepare(playback: PlaybackData, fromTime: TimeInterval) {
         cancel()
+
+        let sortedPedals = playback.pedalEvents.sorted { $0.startTime < $1.startTime }
+        var allEvents: [AudioEvent] = []
+
+        for note in playback.notes {
+            let noteStart = note.startTime
+
+            // Calculate effective end with pedal logic
+            var effectiveEnd = noteStart + note.duration
+
+            // Check if the pedal is actually held at the moment the note ends.
+            // Find the last pedal event (up or down) at or before the note's end time.
+            if let lastPedalEvent = sortedPedals.last(where: { $0.startTime <= (effectiveEnd + 0.05) }),
+               lastPedalEvent.isDown {
+                // Pedal is genuinely held when the note ends — extend to next pedal-up
+                if let nextUp = sortedPedals.first(where: { $0.startTime > effectiveEnd && !$0.isDown }) {
+                    effectiveEnd = nextUp.startTime
+                } else {
+                    effectiveEnd += 2.0
+                }
+            }
+            // No legatoBuffer — rely on the natural sustain of the SoundFont
+
+            // Skip events that have already fully passed
+            if effectiveEnd <= fromTime { continue }
+
+            // Only schedule note-on if it hasn't started yet
+            if noteStart >= fromTime {
+                allEvents.append(AudioEvent(time: noteStart, pitch: note.pitch, isNoteOn: true))
+            } else {
+                // Note already started but not ended — play immediately
+                allEvents.append(AudioEvent(time: fromTime, pitch: note.pitch, isNoteOn: true))
+            }
+
+            allEvents.append(AudioEvent(time: effectiveEnd, pitch: note.pitch, isNoteOn: false))
+        }
+
+        events = allEvents.sorted()
+        nextIndex = 0
+    }
+
+    /// Called every frame by DisplayLinkController. Fires any events up to `currentTime`.
+    func update(currentTime: TimeInterval) {
+        while nextIndex < events.count {
+            let event = events[nextIndex]
+            if event.time > currentTime { break }
+
+            if event.isNoteOn {
+                let count = activeNoteCounts[event.pitch, default: 0]
+                if count == 0 {
+                    // First instance of this pitch — send MIDI note-on
+                    AudioEngineManager.shared.play(note: event.pitch)
+                } else {
+                    // Pitch is already active — re-trigger so the new note
+                    // gets a fresh attack (e.g. repeated same-pitch notes)
+                    AudioEngineManager.shared.stop(note: event.pitch)
+                    AudioEngineManager.shared.play(note: event.pitch)
+                }
+                activeNoteCounts[event.pitch] = count + 1
+            } else {
+                let count = activeNoteCounts[event.pitch, default: 0]
+                let newCount = max(0, count - 1)
+                activeNoteCounts[event.pitch] = newCount
+                if newCount == 0 {
+                    // Last instance released — send MIDI note-off
+                    AudioEngineManager.shared.stop(note: event.pitch)
+                }
+            }
+            nextIndex += 1
+        }
     }
 
     func cancel() {
-        timers.forEach { $0.invalidate() }
-        timers.removeAll()
+        events.removeAll()
+        nextIndex = 0
+        for (pitch, count) in activeNoteCounts where count > 0 {
+            AudioEngineManager.shared.stop(note: pitch)
+        }
+        activeNoteCounts.removeAll()
     }
 }

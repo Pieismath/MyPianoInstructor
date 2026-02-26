@@ -7,8 +7,12 @@
 import SwiftUI
 
 struct RootTabView: View {
-    @EnvironmentObject var libraryVM: SongLibraryViewModel
-    
+    @Environment(SongLibraryViewModel.self) var libraryVM
+    @Environment(PracticeStatsManager.self) var statsManager
+    @Environment(AchievementManager.self) var achievementManager
+    @Environment(ThemeManager.self) var themeManager
+    @Environment(NotificationManager.self) var notificationManager
+
     @State private var selectedSong: Song? = nil
     @State private var tabSelection: Int = 0
 
@@ -18,44 +22,87 @@ struct RootTabView: View {
             // HOME TAB
             NavigationStack {
                 SongLibraryView(selectedSong: $selectedSong, tabSelection: $tabSelection)
-                    .environmentObject(libraryVM)
+                    .environment(libraryVM)
+                    .environment(statsManager)
+                    .environment(achievementManager)
+                    .environment(themeManager)
             }
-            .tabItem { Image(systemName: "house") }
+            .tabItem {
+                Label("Home", systemImage: "house.fill")
+            }
             .tag(0)
 
-            // SCAN TAB
+            // SCAN / IMPORT TAB
             NavigationStack {
                 ScanMusicView(selectedSong: $selectedSong, tabSelection: $tabSelection)
-                    .environmentObject(libraryVM)
+                    .environment(libraryVM)
             }
-            .tabItem { Image(systemName: "plus.circle") }
+            .tabItem {
+                Label("Add", systemImage: "plus.circle.fill")
+            }
             .tag(1)
 
-            // PLAY TAB
+            // PLAY TAB (hidden tab bar)
             NavigationStack {
-                if let selectedSong,
-                   let xmlData = selectedSong.musicXML.data(using: .utf8) {
-
-                    let playback = MusicXMLParser.parse(data: xmlData)
-
-                    PlaybackView(playback: playback)
-                        .environmentObject(libraryVM)
-
+                if let selectedSong {
+                    let playback = libraryVM.cachedPlayback(for: selectedSong)
+                    PlayerView(playback: playback, songTitle: selectedSong.title, song: selectedSong)
+                        .environment(libraryVM)
+                        .environment(statsManager)
+                        .environment(achievementManager)
+                        .environment(themeManager)
                 } else {
-                    Text("No song selected")
+                    noSongSelectedView
                 }
             }
             .landscapeOnly()
             .toolbar(.hidden, for: .tabBar)
-            .tabItem { Image(systemName: "play.circle") }
+            .tabItem {
+                Label("Play", systemImage: "play.circle.fill")
+            }
             .tag(2)
-        }
 
-        // Handle tab switching notifications
+            // STATS TAB
+            NavigationStack {
+                StatsView()
+                    .environment(statsManager)
+                    .environment(libraryVM)
+                    .environment(achievementManager)
+                    .environment(themeManager)
+                    .environment(notificationManager)
+            }
+            .tabItem {
+                Label("Progress", systemImage: "chart.bar.fill")
+            }
+            .tag(3)
+        }
+        .tint(AppTheme.accent)
         .onReceive(NotificationCenter.default.publisher(for: .switchTab)) { notif in
             if let index = notif.object as? Int {
                 tabSelection = index
             }
         }
+    }
+
+    private var noSongSelectedView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "music.note.list")
+                .font(.system(size: 48))
+                .foregroundColor(.secondary)
+            Text("No Song Selected")
+                .font(.title3).bold()
+            Text("Select a song from your library to start playing")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            Button {
+                tabSelection = 0
+            } label: {
+                Label("Go to Library", systemImage: "house")
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(AppTheme.accent)
+        }
+        .padding()
     }
 }

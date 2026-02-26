@@ -35,6 +35,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		AABB00112EFFF00000000001 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		F2C938642EDFBD3600579BDB /* App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = App;
@@ -101,6 +106,7 @@
 				F2C9386D2EDFCB2900579BDB /* Models */,
 				F2C938642EDFBD3600579BDB /* App */,
 				F2C9387E2EDFCB7D00579BDB /* Views */,
+				AABB00112EFFF00000000001 /* Resources */,
 				F2C938892EDFCC5F00579BDB /* MyPianoInstructor.app */,
 				F2C9388A2EDFCC5F00579BDB /* MyPianoInstructorTests.xctest */,
 				F2C9388B2EDFCC5F00579BDB /* MyPianoInstructorUITests.xctest */,
@@ -124,6 +130,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				AABB00112EFFF00000000001 /* Resources */,
 				F2C938642EDFBD3600579BDB /* App */,
 				F2C9386D2EDFCB2900579BDB /* Models */,
 				F2C938772EDFCB6700579BDB /* ViewModels */,
@@ -411,6 +418,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6N239V8VV5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -423,7 +431,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jhfang.MyPianoInstructor;
+				PRODUCT_BUNDLE_IDENTIFIER = jhfang.MyPianoInstructor2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -442,6 +450,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6N239V8VV5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -454,7 +463,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = jhfang.MyPianoInstructor;
+				PRODUCT_BUNDLE_IDENTIFIER = jhfang.MyPianoInstructor2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;

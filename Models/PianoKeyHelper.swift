@@ -38,6 +38,17 @@ enum PianoKeyHelper {
         (lowestMIDIPitch...highestMIDIPitch).filter { isBlack($0) }
     }
 
+    // MARK: - Cached Index Lookups
+
+    /// Maps each white key MIDI pitch to its index in whiteKeyMIDIs (O(1) lookup)
+    static let whiteKeyIndexMap: [Int: Int] = {
+        var map = [Int: Int]()
+        for (i, pitch) in whiteKeyMIDIs.enumerated() {
+            map[pitch] = i
+        }
+        return map
+    }()
+
     // MARK: - Logic for determining when a black key exists between two whites
 
     static func hasBlackKey(between lowerWhite: Int, and nextWhite: Int) -> Bool {
